@@ -11,13 +11,13 @@ pub struct Player {
 
 #[derive(Debug)]
 pub enum PlayerFacing {
-    South,
-    East,
     North,
+    East,
+    South,
     West,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum PlayerState {
     Idle,
     Walk,
@@ -26,8 +26,8 @@ pub enum PlayerState {
 
 #[derive(Debug)]
 pub struct Pos {
-    pub x: i32,
-    pub y: i32,
+    pub x: f32,
+    pub y: f32,
 }
 
 impl Player {
@@ -37,7 +37,7 @@ impl Player {
             state: PlayerState::Idle,
             attack: 1,
             attack_range: 1,
-            facing: PlayerFacing::East,
+            facing: PlayerFacing::South,
         }
     }
 }

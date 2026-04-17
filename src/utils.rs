@@ -14,7 +14,7 @@ impl Window {
 
 pub fn normalize_coordinate(width: i32, height: i32) -> Pos {
     Pos {
-        x: width / 2,
-        y: height / 2,
+        x: (width / 2) as f32,
+        y: (height / 2) as f32,
     }
 }
