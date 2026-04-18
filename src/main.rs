@@ -1,3 +1,4 @@
+mod constants;
 mod entities;
 mod system;
 mod utils;
@@ -5,15 +6,16 @@ mod utils;
 use raylib::prelude::*;
 
 use crate::{
+    constants::{MOVE_SPEED, TITLE, WINDOW_HEIGHT, WINDOW_WIDTH},
     entities::{Player, PlayerFacing, PlayerState},
     utils::Window,
 };
 
 fn main() {
-    let window = Window::new(640, 480);
+    let window = Window::new(WINDOW_WIDTH, WINDOW_HEIGHT);
     let (mut rl, thread) = raylib::init()
         .size(window.width, window.height)
-        .title("Hello, World")
+        .title(TITLE)
         .build();
 
     let mut p = Player::new(window.width, window.height);
@@ -53,7 +55,7 @@ fn draw(d: &mut RaylibDrawHandle, p: &mut Player) {
                         (p.position.y + 10.0) as i32,
                         2,
                         Color::BLACK,
-                    )
+                    );
                 }
             }
             PlayerFacing::East => {
@@ -64,7 +66,7 @@ fn draw(d: &mut RaylibDrawHandle, p: &mut Player) {
                         (p.position.y) as i32,
                         2,
                         Color::BLACK,
-                    )
+                    );
                 }
             }
             PlayerFacing::North => {
@@ -75,7 +77,7 @@ fn draw(d: &mut RaylibDrawHandle, p: &mut Player) {
                         (p.position.y - 10.0) as i32,
                         2,
                         Color::BLACK,
-                    )
+                    );
                 }
             }
             PlayerFacing::West => {
@@ -86,7 +88,7 @@ fn draw(d: &mut RaylibDrawHandle, p: &mut Player) {
                         (p.position.y) as i32,
                         2,
                         Color::BLACK,
-                    )
+                    );
                 }
             }
         }
@@ -97,8 +99,8 @@ fn process_inputs(rl: &RaylibHandle, p: &mut Player) {
     let mut any_key_down = false;
     let mut dx = 0.0;
     let mut dy = 0.0;
-    let speed = 50.0;
 
+    // TODO: should call 'move'
     if rl.is_key_down(KeyboardKey::KEY_RIGHT) || rl.is_key_down(KeyboardKey::KEY_D) {
         dx += 1.0;
     }
@@ -122,8 +124,8 @@ fn process_inputs(rl: &RaylibHandle, p: &mut Player) {
         if let Some(facing) = get_facing(dx, dy) {
             p.facing = facing;
         }
-        p.position.x += dx * speed * rl.get_frame_time();
-        p.position.y += dy * speed * rl.get_frame_time();
+        p.position.x += dx * MOVE_SPEED * rl.get_frame_time();
+        p.position.y += dy * MOVE_SPEED * rl.get_frame_time();
     }
 
     if rl.is_key_pressed(KeyboardKey::KEY_SPACE) {
