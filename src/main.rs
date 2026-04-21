@@ -8,24 +8,23 @@ use raylib::prelude::*;
 use crate::{
     constants::{MOVE_SPEED, TITLE, WINDOW_HEIGHT, WINDOW_WIDTH},
     entities::{Player, PlayerFacing, PlayerState},
-    utils::Window,
 };
 
 fn main() {
-    let window = Window::new(WINDOW_WIDTH, WINDOW_HEIGHT);
     let (mut rl, thread) = raylib::init()
-        .size(window.width, window.height)
+        .size(WINDOW_WIDTH, WINDOW_HEIGHT)
         .title(TITLE)
         .build();
 
-    let mut p = Player::new(window.width, window.height);
+    let mut p = Player::new(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     rl.set_target_fps(60);
 
     while !rl.window_should_close() {
+        p.save_previous_position();
+
         process_inputs(&rl, &mut p);
 
-        // NOTE: draw call should be
         let mut d = rl.begin_drawing(&thread);
 
         draw(&mut d, &mut p);
@@ -35,6 +34,19 @@ fn main() {
 }
 
 fn draw(d: &mut RaylibDrawHandle, p: &mut Player) {
+    let box_a = Rectangle {
+        x: p.position.x,
+        y: p.position.y,
+        width: 10.0,
+        height: 10.0,
+    };
+    let window_collider = Rectangle {
+        x: 0.0,
+        y: 0.0,
+        height: WINDOW_HEIGHT as f32,
+        width: WINDOW_WIDTH as f32,
+    };
+
     d.clear_background(Color::WHITE);
 
     // PLAYER DRAWING
@@ -46,6 +58,12 @@ fn draw(d: &mut RaylibDrawHandle, p: &mut Player) {
             2,
             Color::BLACK,
         );
+        d.draw_rectangle_lines_ex(box_a, 1.0, Color::RED);
+        println!("{:?}", window_collider.get_collision_rec(&box_a));
+        match window_collider.get_collision_rec(&box_a) {
+            None => p.revert_position(),
+            _ => (),
+        }
         match p.facing {
             PlayerFacing::South => {
                 if p.state == PlayerState::Attack {

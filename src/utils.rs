@@ -1,19 +1,7 @@
-use crate::entities::Pos;
+use raylib::ffi::Vector2;
 
-#[derive(Debug)]
-pub struct Window {
-    pub height: i32,
-    pub width: i32,
-}
-
-impl Window {
-    pub fn new(width: i32, height: i32) -> Window {
-        Window { height, width }
-    }
-}
-
-pub fn normalize_coordinate(width: i32, height: i32) -> Pos {
-    Pos {
+pub fn normalize_coordinate(width: i32, height: i32) -> Vector2 {
+    Vector2 {
         x: (width / 2) as f32,
         y: (height / 2) as f32,
     }
