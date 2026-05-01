@@ -11,6 +11,7 @@ pub enum GlobalAction {
     Attack,
     Wait,
     None,
+    Collide { entity: Kind, dx: f32, dy: f32 },
 }
 
 #[derive(Debug)]

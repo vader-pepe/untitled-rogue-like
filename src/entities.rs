@@ -1,4 +1,4 @@
-use raylib::ffi::KeyboardKey;
+use raylib::{ffi::KeyboardKey, math::Rectangle};
 
 use crate::{
     state_manager::{Direction, EnemyState, PlayerState},
@@ -40,6 +40,7 @@ pub struct Player {
     combat: Combat,
     pub state: PlayerState,
     pub facing: Direction,
+    pub hitbox: Rectangle,
 }
 
 #[derive(Debug)]
@@ -61,6 +62,8 @@ impl Movable for Player {
     fn moving(&mut self, dx: f32, dy: f32, speed: f32) {
         self.pos.x += dx * speed;
         self.pos.y += dy * speed;
+        self.hitbox.x = self.pos.x;
+        self.hitbox.y = self.pos.y;
     }
 }
 
@@ -85,6 +88,12 @@ impl Player {
             combat: Combat {
                 attack: 1,
                 range: 1,
+            },
+            hitbox: Rectangle {
+                x,
+                y,
+                width: 15.0,
+                height: 15.0,
             },
             facing: Direction::South,
         }
