@@ -1,4 +1,5 @@
-use raylib::RaylibHandle;
+use raylib::{RaylibHandle, ffi::Rectangle, texture::Texture2D};
+use tiled_json_rs::Map;
 
 use crate::{
     constants::MOVE_SPEED,
@@ -8,10 +9,8 @@ use crate::{
 #[derive(Debug)]
 pub enum GlobalAction {
     Move { entity: Kind, dx: f32, dy: f32 },
-    Attack,
-    Wait,
+    Attack { entity: Kind },
     None,
-    Collide { entity: Kind, dx: f32, dy: f32 },
 }
 
 #[derive(Debug)]
@@ -58,6 +57,9 @@ pub enum Direction {
 #[derive(Debug)]
 pub struct Game {
     pub state: GameState,
+    pub textures: Vec<Texture2D>,
+    pub map: Vec<Map>,
+    pub tiles: Vec<Rectangle>,
 }
 
 impl Game {
@@ -65,11 +67,13 @@ impl Game {
         Self {
             // TODO: show menu first idiot
             state: GameState::Playing,
+            textures: vec![],
+            map: vec![],
+            tiles: vec![],
         }
     }
 }
 
 pub fn try_to_move<T: Movable>(rl: &RaylibHandle, entity: &mut T, dx: f32, dy: f32) {
-    // TODO: check if there is obstacle forward
     entity.moving(dx, dy, MOVE_SPEED * rl.get_frame_time());
 }

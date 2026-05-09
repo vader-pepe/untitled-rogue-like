@@ -1,0 +1,14 @@
+{ "columns":30,
+ "image":"..\/pixelarium\/Pixelarium - GrassLands - Free Version\/Pack content\/Sprites\/Tileset\/spr_grass_tileset.png",
+ "imageheight":464,
+ "imagewidth":480,
+ "margin":0,
+ "name":"1",
+ "spacing":0,
+ "tilecount":870,
+ "tiledversion":"1.12.1",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}

@@ -22,22 +22,24 @@ pub trait Breakable {
 }
 
 #[derive(Debug)]
-struct Health {
-    current: i32,
-    max: i32,
+pub struct Health {
+    pub current: i32,
+    pub max: i32,
 }
 
 #[derive(Debug)]
-struct Combat {
+pub struct Combat {
     attack: i32,
     range: i32,
+    pub attack_timer: i32,
+    pub attack_cooldown: i32,
 }
 
 #[derive(Debug)]
 pub struct Player {
     pub pos: Position,
     health: Health,
-    combat: Combat,
+    pub combat: Combat,
     pub state: PlayerState,
     pub facing: Direction,
     pub hitbox: Rectangle,
@@ -46,10 +48,11 @@ pub struct Player {
 #[derive(Debug)]
 pub struct Enemy {
     pub pos: Position,
-    health: Health,
-    combat: Combat,
-    state: EnemyState,
-    facing: Direction,
+    pub health: Health,
+    pub combat: Combat,
+    pub state: EnemyState,
+    pub facing: Direction,
+    pub hitbox: Rectangle,
 }
 
 #[derive(Debug)]
@@ -88,6 +91,58 @@ impl Player {
             combat: Combat {
                 attack: 1,
                 range: 1,
+                attack_timer: 12,
+                attack_cooldown: 30,
+            },
+            hitbox: Rectangle {
+                x,
+                y,
+                width: 14.0,
+                height: 14.0,
+            },
+            facing: Direction::South,
+        }
+    }
+
+    pub fn weapon_hitbox(&self) -> Rectangle {
+        Rectangle {
+            x: match self.facing {
+                Direction::North => self.pos.x,
+                Direction::East => self.pos.x + 14.0,
+                Direction::South => self.pos.x,
+                Direction::West => self.pos.x - 14.0,
+            },
+            y: match self.facing {
+                Direction::North => self.pos.y - 14.0,
+                Direction::East => self.pos.y,
+                Direction::South => self.pos.y + 14.0,
+                Direction::West => self.pos.y,
+            },
+            width: 14.0,
+            height: 14.0,
+        }
+    }
+}
+
+impl Enemy {
+    pub fn new(x: f32, y: f32) -> Self {
+        Self {
+            state: EnemyState::Idle,
+            pos: Position {
+                x,
+                y,
+                prev_x: x,
+                prev_y: y,
+            },
+            health: Health {
+                current: 100,
+                max: 100,
+            },
+            combat: Combat {
+                attack: 1,
+                range: 1,
+                attack_timer: 12,
+                attack_cooldown: 30,
             },
             hitbox: Rectangle {
                 x,
@@ -97,26 +152,5 @@ impl Player {
             },
             facing: Direction::South,
         }
-    }
-
-    pub fn attack(&mut self, key: KeyboardKey) {
-        let mut any_key_down = false;
-        if key == KeyboardKey::KEY_SPACE {
-            any_key_down = true;
-            self.state = PlayerState::Attack;
-        }
-        if !any_key_down {
-            self.state = PlayerState::Idle;
-        }
-    }
-
-    pub fn save_previous_position(&mut self) {
-        self.pos.prev_x = self.pos.x;
-        self.pos.prev_y = self.pos.y;
-    }
-
-    pub fn revert_position(&mut self) {
-        self.pos.x = self.pos.prev_x;
-        self.pos.y = self.pos.prev_y;
     }
 }

@@ -1,0 +1,140 @@
+{
+    "activeFile": "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base.json",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base.json": {
+            "scale": 1.7782812499999998,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 303.10166066250775,
+                "y": 275.5469642386434
+            }
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base.json#1": {
+            "scaleInDock": 2.2579
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base.json#2": {
+            "scaleInDock": 3.4913
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base.json#3": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base2.json": {
+            "scale": 2.0938,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 266.97869901614297,
+                "y": 315.69395357722806
+            }
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base2.json#1": {
+            "scaleInDock": 1
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base2.json#2": {
+            "scaleInDock": 2.5878
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base2.json#3": {
+            "scaleInDock": 3.732
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base3.json": {
+            "scale": 1.7782812499999998,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 319.9718829628328,
+                "y": 245.74290484140238
+            }
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base3.json#1": {
+            "scaleInDock": 1
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base3.json#2": {
+            "scaleInDock": 1
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base3.json#3": {
+            "scaleInDock": 4.1963
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/dungeon-tileset.json": {
+            "scaleInDock": 2.4825,
+            "scaleInEditor": 3.9993
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/dungeon-tileset2.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/grass-tileset.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "1.xml": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "2.xml": {
+            "scaleInDock": 2.9226,
+            "scaleInEditor": 4.9057
+        },
+        "3.xml": {
+            "scaleInDock": 2.5618,
+            "scaleInEditor": 1
+        },
+        "base.json": {
+            "scale": 1.7782812499999998,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 244.0558826113699,
+                "y": 233.9337492311748
+            }
+        },
+        "base.xml": {
+            "scale": 1.7782812499999998,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 319.9718829628328,
+                "y": 239.55715666461649
+            }
+        },
+        "dungeon-tileset.json": {
+            "scaleInDock": 2.571,
+            "scaleInEditor": 1
+        },
+        "dungeon-tileset2.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "grass-tileset.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps",
+    "map.height": 30,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 40,
+    "openFiles": [
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base.json"
+    ],
+    "project": "untitled.tiled-project",
+    "recentFiles": [
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/dungeon-tileset2.json",
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base.json",
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/base2.json",
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/dungeon-tileset.json",
+        "/home/ihsankl/Documents/github/untitled_rogue-lite/assets/maps/grass-tileset.json",
+        "grass-tileset.json",
+        "base.json",
+        "dungeon-tileset.json",
+        "dungeon-tileset2.json",
+        "1.xml",
+        "2.xml",
+        "3.xml"
+    ]
+}
