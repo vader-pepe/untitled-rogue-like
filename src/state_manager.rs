@@ -1,10 +1,5 @@
-use raylib::{RaylibHandle, ffi::Rectangle, texture::Texture2D};
+use raylib::{ffi::Rectangle, texture::Texture2D};
 use tiled_json_rs::Map;
-
-use crate::{
-    constants::MOVE_SPEED,
-    entities::{Crate, Enemy, Movable, Player},
-};
 
 #[derive(Debug)]
 pub enum GlobalAction {
@@ -58,6 +53,7 @@ pub enum Direction {
 pub struct Game {
     pub state: GameState,
     pub textures: Vec<Texture2D>,
+    pub character_textures: Vec<Texture2D>,
     pub map: Vec<Map>,
     pub tiles: Vec<Rectangle>,
 }
@@ -68,12 +64,9 @@ impl Game {
             // TODO: show menu first idiot
             state: GameState::Playing,
             textures: vec![],
+            character_textures: vec![],
             map: vec![],
             tiles: vec![],
         }
     }
-}
-
-pub fn try_to_move<T: Movable>(rl: &RaylibHandle, entity: &mut T, dx: f32, dy: f32) {
-    entity.moving(dx, dy, MOVE_SPEED * rl.get_frame_time());
 }

@@ -1,0 +1,14 @@
+{ "columns":45,
+ "image":"..\/eris-character\/16x16\/16x16 All Animations-Sheet.png",
+ "imageheight":168,
+ "imagewidth":720,
+ "margin":0,
+ "name":"16x16 All Animations-Sheet",
+ "spacing":0,
+ "tilecount":450,
+ "tiledversion":"1.12.1",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}

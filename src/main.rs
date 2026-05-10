@@ -8,12 +8,12 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 
-use raylib::prelude::*;
+use raylib::{ffi::Rectangle, prelude::*};
 
 use crate::{
-    constants::{TILE_HEIGHT, TILE_WIDTH, TITLE, WINDOW_HEIGHT, WINDOW_WIDTH},
-    entities::{Enemy, Player},
-    state_manager::{Game, GlobalAction, Kind, PlayerState, try_to_move},
+    constants::{MOVE_SPEED, TILE_HEIGHT, TILE_WIDTH, TITLE, WINDOW_HEIGHT, WINDOW_WIDTH},
+    entities::{Enemy, Movable, Player},
+    state_manager::{Direction, Game, GlobalAction, Kind, PlayerState},
     utils::{breakdown_tiles, get_facing},
 };
 
@@ -31,12 +31,21 @@ fn main() {
     map_file.push(env!("CARGO_MANIFEST_DIR"));
     map_file.push("assets");
     map_file.push("maps");
-    map_file.push("base3.json");
-    let map_file = map_file;
+    map_file.push("base2.json");
     let map = tiled_json_rs::Map::load_from_file(&map_file.as_path()).expect("Cannot open!");
     g.map.push(map.clone());
     let tile_arr = breakdown_tiles(&map.tile_sets);
     g.tiles = tile_arr;
+    let mut player_texture_path = PathBuf::new();
+    player_texture_path.push(env!("CARGO_MANIFEST_DIR"));
+    player_texture_path.push("assets");
+    player_texture_path.push("mystic-woods");
+    player_texture_path.push("sprite_sheet_.png");
+    let player_texture = rl
+        .load_texture(&thread, player_texture_path.to_str().unwrap())
+        .unwrap();
+    // NOTE: index 1 always for player
+    g.character_textures.push(player_texture);
     for tileset in &map.tile_sets {
         let map_dir = map_file.parent().unwrap();
         let image_path = map_dir.join(&tileset.image).canonicalize().unwrap();
@@ -48,6 +57,7 @@ fn main() {
 
     let mut e: Vec<Enemy> = vec![];
     let mut pending_actions: Vec<GlobalAction> = vec![GlobalAction::None];
+
     rl.set_target_fps(60);
     while !rl.window_should_close() {
         handle_input(&rl, &mut g, &mut p, &mut pending_actions);
@@ -112,6 +122,7 @@ fn update(
     p.pos.prev_x = p.pos.x;
     p.pos.prev_y = p.pos.y;
     let weapon_hitbox = p.weapon_hitbox();
+    try_to_spawn_enemies(e);
 
     for action in &mut *pending_actions {
         match action {
@@ -125,23 +136,25 @@ fn update(
                 };
                 if p.state != PlayerState::Attack {
                     // Clamp position based on movement direction before updating facing
-                    if *dx < 0.0 && p.pos.x <= 0.0 {
-                        p.pos.x = 0.0;
+                    if *dx < 0.0 && p.pos.x <= TILE_WIDTH as f32 {
+                        p.pos.x = 16.0;
                     }
-                    if *dx > 0.0 && p.pos.x >= (WINDOW_WIDTH - 15) as f32 {
-                        p.pos.x = (WINDOW_WIDTH - p.hitbox.width as i32) as f32;
+                    if *dx > 0.0 && p.pos.x >= (WINDOW_WIDTH - 32) as f32 {
+                        p.pos.x = (WINDOW_WIDTH - (p.hitbox.width + 16.0) as i32) as f32;
                     }
-                    if *dy < 0.0 && p.pos.y <= 0.0 {
-                        p.pos.y = 0.0;
+                    if *dy < 0.0 && p.pos.y <= TILE_HEIGHT as f32 {
+                        p.pos.y = 16.0;
                     }
-                    if *dy > 0.0 && p.pos.y >= (WINDOW_HEIGHT - p.hitbox.height as i32) as f32 {
-                        p.pos.y = (WINDOW_HEIGHT - p.hitbox.height as i32) as f32;
+                    if *dy > 0.0
+                        && p.pos.y >= (WINDOW_HEIGHT - (p.hitbox.height + 28.0) as i32) as f32
+                    {
+                        p.pos.y = (WINDOW_HEIGHT - (p.hitbox.height + 28.0) as i32) as f32;
                     }
                     p.facing = facing;
                     if p.combat.attack_timer <= 0 {
                         p.state = PlayerState::Walk;
                     }
-                    try_to_move(rl, p, *dx, *dy);
+                    p.move_to(*dx, *dy, MOVE_SPEED * rl.get_frame_time());
                 }
             }
             GlobalAction::Move {
@@ -150,12 +163,14 @@ fn update(
                 dy,
             } => {
                 // try to move toward player
-                try_to_move(rl, p, *dx, *dy);
+                for enemy in e.iter_mut() {
+                    enemy.move_to(*dx, *dy, MOVE_SPEED * rl.get_frame_time());
+                }
             }
             GlobalAction::Move {
                 entity: Kind::Neutral,
-                dx,
-                dy,
+                dx: _,
+                dy: _,
             } => (),
             GlobalAction::Attack {
                 entity: Kind::Player,
@@ -193,26 +208,24 @@ fn update(
         p.combat.attack_cooldown -= 1;
     }
 
-    try_to_spawn_enemies(e);
     for enemy in e.iter_mut() {
         if weapon_hitbox.check_collision_recs(&enemy.hitbox)
             && p.state == PlayerState::Attack
             && p.combat.attack_timer == 12
         {
-            enemy.health.current -= 34;
+            enemy.health.current -= p.combat.attack;
         }
     }
     let mut index_enemies_to_remove: Vec<usize> = vec![];
     for (index, enemy) in e.iter_mut().enumerate() {
         // Resolve collisions with enemies
         if enemy.hitbox.x <= 0.0
-            || enemy.hitbox.x >= WINDOW_WIDTH as f32
+            || enemy.hitbox.x >= (WINDOW_WIDTH - (TILE_WIDTH * 2)) as f32
             || enemy.hitbox.y <= 0.0
-            || enemy.hitbox.y >= WINDOW_HEIGHT as f32
+            || enemy.hitbox.y >= (WINDOW_HEIGHT - (TILE_HEIGHT * 2)) as f32
             || enemy.health.current <= 0
         {
             index_enemies_to_remove.push(index);
-            continue;
         }
         if p.hitbox.check_collision_recs(&enemy.hitbox) {
             p.pos.x = p.pos.prev_x;
@@ -266,6 +279,7 @@ fn draw(d: &mut RaylibDrawHandle, g: &mut Game, p: &mut Player, e: &mut Vec<Enem
 fn draw_world(d: &mut RaylibDrawHandle, g: &mut Game) {
     d.clear_background(Color::WHITE);
 
+    // TODO: this causes map overlap
     for map in g.map.iter() {
         for map_layer in &map.layers {
             match &map_layer.layer_type {
@@ -311,12 +325,85 @@ fn draw_world(d: &mut RaylibDrawHandle, g: &mut Game) {
 }
 
 fn draw_entities(d: &mut RaylibDrawHandle, g: &mut Game, p: &mut Player, e: &mut Vec<Enemy>) {
+    match p.state {
+        PlayerState::Idle => {
+            // animate idle
+        }
+        PlayerState::Attack => {
+            // animate attack
+        }
+        PlayerState::Walk => {
+            // animate move
+        }
+        PlayerState::Dead => {
+            // animate death
+        }
+    }
+
     // player
+    match p.facing {
+        Direction::North => d.draw_texture_rec(
+            &g.character_textures[0],
+            Rectangle {
+                x: 194.0,
+                y: 5.0,
+                width: 16.0,
+                height: 20.0,
+            },
+            Vector2 {
+                x: p.pos.x,
+                y: p.pos.y,
+            },
+            Color::WHITE,
+        ),
+        Direction::East => d.draw_texture_rec(
+            &g.character_textures[0],
+            Rectangle {
+                x: 92.0,
+                y: 5.0,
+                width: 16.0,
+                height: 22.0,
+            },
+            Vector2 {
+                x: p.pos.x,
+                y: p.pos.y,
+            },
+            Color::WHITE,
+        ),
+        Direction::South => d.draw_texture_rec(
+            &g.character_textures[0],
+            Rectangle {
+                x: 2.0,
+                y: 5.0,
+                width: 16.0,
+                height: 20.0,
+            },
+            Vector2 {
+                x: p.pos.x,
+                y: p.pos.y,
+            },
+            Color::WHITE,
+        ),
+        Direction::West => d.draw_texture_rec(
+            &g.character_textures[0],
+            Rectangle {
+                x: 92.0,
+                y: 5.0,
+                width: -16.0,
+                height: 22.0,
+            },
+            Vector2 {
+                x: p.pos.x,
+                y: p.pos.y,
+            },
+            Color::WHITE,
+        ),
+    };
     d.draw_rectangle_lines_ex(p.hitbox, 1.0, Color::RED);
 
     // enemies
     for enemy in e.iter() {
-        d.draw_rectangle_lines_ex(enemy.hitbox, 1.0, Color::BLACK);
+        d.draw_rectangle_lines_ex(enemy.hitbox, 1.0, Color::ORANGE);
     }
 
     // animate sword swing

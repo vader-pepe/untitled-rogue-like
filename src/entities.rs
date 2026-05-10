@@ -1,9 +1,6 @@
-use raylib::{ffi::KeyboardKey, math::Rectangle};
+use raylib::math::Rectangle;
 
-use crate::{
-    state_manager::{Direction, EnemyState, PlayerState},
-    utils::get_facing,
-};
+use crate::state_manager::{Direction, EnemyState, PlayerState};
 
 #[derive(Debug)]
 pub struct Position {
@@ -14,11 +11,15 @@ pub struct Position {
 }
 
 pub trait Movable {
-    fn moving(&mut self, dx: f32, dy: f32, speed: f32);
+    fn move_to(&mut self, dx: f32, dy: f32, speed: f32);
 }
 
 pub trait Breakable {
     fn destroy(&self);
+}
+
+pub trait Entities {
+    fn instantiate() -> Self;
 }
 
 #[derive(Debug)]
@@ -29,7 +30,7 @@ pub struct Health {
 
 #[derive(Debug)]
 pub struct Combat {
-    attack: i32,
+    pub attack: i32,
     range: i32,
     pub attack_timer: i32,
     pub attack_cooldown: i32,
@@ -62,7 +63,7 @@ pub struct Crate {
 }
 
 impl Movable for Player {
-    fn moving(&mut self, dx: f32, dy: f32, speed: f32) {
+    fn move_to(&mut self, dx: f32, dy: f32, speed: f32) {
         self.pos.x += dx * speed;
         self.pos.y += dy * speed;
         self.hitbox.x = self.pos.x;
@@ -71,7 +72,7 @@ impl Movable for Player {
 }
 
 impl Movable for Enemy {
-    fn moving(&mut self, dx: f32, dy: f32, speed: f32) {}
+    fn move_to(&mut self, dx: f32, dy: f32, speed: f32) {}
 }
 
 impl Player {
@@ -89,7 +90,7 @@ impl Player {
                 max: 100,
             },
             combat: Combat {
-                attack: 1,
+                attack: 34,
                 range: 1,
                 attack_timer: 12,
                 attack_cooldown: 30,
