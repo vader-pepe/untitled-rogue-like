@@ -1,7 +1,9 @@
 use raylib::math::Rectangle;
 
-use crate::state_manager::{Direction, EnemyState, PlayerState};
-
+use crate::{
+    anim::{Anim, AnimFrame, AnimState},
+    state_manager::{Direction, EnemyState, PlayerState},
+};
 #[derive(Debug)]
 pub struct Position {
     pub x: f32,
@@ -11,7 +13,7 @@ pub struct Position {
 }
 
 pub trait Movable {
-    fn move_to(&mut self, dx: f32, dy: f32, speed: f32);
+    fn accelerate(&mut self, dx: f32, dy: f32, speed: f32);
 }
 
 pub trait Breakable {
@@ -44,6 +46,7 @@ pub struct Player {
     pub state: PlayerState,
     pub facing: Direction,
     pub hitbox: Rectangle,
+    pub animations: Vec<AnimState>,
 }
 
 #[derive(Debug)]
@@ -63,7 +66,7 @@ pub struct Crate {
 }
 
 impl Movable for Player {
-    fn move_to(&mut self, dx: f32, dy: f32, speed: f32) {
+    fn accelerate(&mut self, dx: f32, dy: f32, speed: f32) {
         self.pos.x += dx * speed;
         self.pos.y += dy * speed;
         self.hitbox.x = self.pos.x;
@@ -72,13 +75,19 @@ impl Movable for Player {
 }
 
 impl Movable for Enemy {
-    fn move_to(&mut self, dx: f32, dy: f32, speed: f32) {}
+    fn accelerate(&mut self, dx: f32, dy: f32, speed: f32) {
+        self.pos.x += dx * speed;
+        self.pos.y += dy * speed;
+        self.hitbox.x = self.pos.x;
+        self.hitbox.y = self.pos.y;
+    }
 }
 
 impl Player {
-    pub fn new(x: f32, y: f32) -> Self {
+    pub fn new(x: f32, y: f32, animations: Vec<AnimState>) -> Self {
         Self {
             state: PlayerState::Idle,
+            animations: vec![],
             pos: Position {
                 x,
                 y,
